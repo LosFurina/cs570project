@@ -91,10 +91,10 @@ def _nw_align_small(x: str, y: str) -> Tuple[str, str]:
 			j -= 1
 		elif i > 0 and ptr[i][j] == 'U':
 			ax.append(x[i - 1])
-			ay.append('-')
+			ay.append('_')
 			i -= 1
 		else:  # 'L'
-			ax.append('-')
+			ax.append('_')
 			ay.append(y[j - 1])
 			j -= 1
 
@@ -107,9 +107,9 @@ def hirschberg(x: str, y: str) -> Tuple[str, str]:
 	"""
 	m, n = len(x), len(y)
 	if m == 0:
-		return '-' * n, y
+		return '_' * n, y
 	if n == 0:
-		return x, '-' * m
+		return x, '_' * m
 	if m == 1 or n == 1:
 		return _nw_align_small(x, y)
 
@@ -138,7 +138,7 @@ def alignment_cost(ax: str, ay: str) -> int:
 	assert len(ax) == len(ay)
 	total = 0
 	for a, b in zip(ax, ay):
-		if a == '-' or b == '-':
+		if a == '_' or b == '_':
 			total += GAP_COST
 		else:
 			total += mismatch_cost(a, b)
@@ -195,16 +195,16 @@ def main():
 	memory_kb = peak_bytes / 1024.0
 	# Write outputs to specified file
 	with open(args.output_file, 'w', encoding='utf-8') as f:
-		f.write(f"X: {x}\n")
-		f.write(f"Y: {y}\n")
-		f.write(f"Aligned X: {ax}\n")
-		f.write(f"Aligned Y: {ay}\n")
-		f.write(f"Cost: {cost}\n")
-		f.write(f"RuntimeMs: {runtime_ms:.3f}\n")
-		f.write(f"MemoryKB: {memory_kb:.3f}\n")
+		# Write only outputs, no labels, in order:
+		# Cost, First string alignment, Second string alignment, Time taken (ms), Memory used (KB)
+		f.write(f"{cost}\n")
+		f.write(f"{ax}\n")
+		f.write(f"{ay}\n")
+		f.write(f"{runtime_ms:.3f}\n")
+		f.write(f"{memory_kb:.3f}\n")
 
 	# Also print a brief summary to stdout
-	print(f"Wrote alignment to {args.output_file}. Cost: {cost}. RuntimeMs: {runtime_ms:.3f}. MemoryKB: {memory_kb:.3f}")
+	print(f"Wrote alignment to {args.output_file}")
 
 
 if __name__ == '__main__':
